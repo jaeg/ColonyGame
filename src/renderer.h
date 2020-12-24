@@ -22,7 +22,15 @@ class Renderer {
         void StartDraw();
         void Cleanup();
         void DrawSprite(int dX,int dY, int dW, int dH, int sX, int sY, int sW, int sH, SDL_Texture* texture);
+        void DrawRect(SDL_Rect rect) {
+            SDL_RenderFillRect( renderer_, &rect );
+        };
 
+        void DrawRectColored(SDL_Rect rect, int r, int g, int b) {
+            SDL_SetRenderDrawColor( renderer_, r, g, b, 255 );
+            SDL_RenderFillRect( renderer_, &rect );
+            SDL_SetRenderDrawColor( renderer_, 255, 255, 255, 255 );
+        };
         SDL_Texture* CreateTexture(SDL_Surface* surface);
         
     private:

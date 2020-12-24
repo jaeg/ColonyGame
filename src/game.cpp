@@ -1,55 +1,74 @@
 #include "game.h"
+Game::Game(Renderer* renderer) 
+{
+    renderer_ = renderer;
 
-void Game::Draw() {
-    int levelWidth = currentLevel_->GetWidth();
-    int levelHeight = currentLevel_->GetHeight();
-
-    for (int x = 0; x < levelWidth; x++){
-        for (int y = 0; y < levelHeight; y++) {
-            Tile tile = currentLevel_->GetTile(x,y);
-            if (tile.type == -1) {
-                renderer_->DrawSprite(x*16, y*16, 16, 16, 0, 0, 16, 16, resourceManager_->GetTexture("tileset"));
-            } else if (tile.type == 1) {
-                renderer_->DrawSprite(x*16, y*16, 16, 16, 0, 16, 16, 16, resourceManager_->GetTexture("tileset"));
-            } else if (tile.type == 2) {
-                renderer_->DrawSprite(x*16, y*16, 16, 16, 0, 32, 16, 16, resourceManager_->GetTexture("tileset"));
-            } else {
-                renderer_->DrawSprite(x*16, y*16, 16, 16, 0, 48, 16, 16, resourceManager_->GetTexture("tileset"));
-            }
-            
-            Tile newTile;
-            newTile.type = 2;
-            currentLevel_->SetTile(x,y,newTile);
-        }
-    }
+    //Create the initial state.
+    MainState* mainState = new MainState(renderer);
+    this->states_.push(mainState);
 };
 
+void Game::Update() {
+    if(peekState() == nullptr) return;
+    peekState()->Update();
+}
 
-void Game::DrawView(int aX, int aY, int width, int height, bool centered) {
-            int left = aX - width/2;
-            int right = aX + width/2;
-            int up = aY - height/2;
-            int down = aY + height/2;
+void Game::Draw() {
+    if(peekState() == nullptr) return;
 
-            if (centered == false) {
-                left = aX;
-                right = aX + width - 1;
-                up = aY;
-                down = aY + height;
-            }
+    renderer_->StartDraw();
+    peekState()->Draw();
+    renderer_->Draw();
+    
+};
 
-            for (int x = left; x <= right; x++) {
-                for (int y = up; y <= down; y++) {
-                    Tile tile = currentLevel_->GetTile(x,y);
-                    if (tile.type == -1) {
-                        renderer_->DrawSprite(x*16, y*16, 16, 16, 0, 0, 16, 16, resourceManager_->GetTexture("tileset"));
-                    } else if (tile.type == 1) {
-                        renderer_->DrawSprite(x*16, y*16, 16, 16, 0, 16, 16, 16, resourceManager_->GetTexture("tileset"));
-                    } else if (tile.type == 2) {
-                        renderer_->DrawSprite(x*16, y*16, 16, 16, 0, 32, 16, 16, resourceManager_->GetTexture("tileset"));
-                    } else {
-                        renderer_->DrawSprite(x*16, y*16, 16, 16, 0, 48, 16, 16, resourceManager_->GetTexture("tileset"));
-                    }
-                }
+void Game::pushState(GameState* state)
+{
+    this->states_.push(state);
+ 
+    return;
+}
+ 
+void Game::popState()
+{
+    delete this->states_.top();
+    this->states_.pop();
+ 
+    return;
+}
+ 
+void Game::changeState(GameState* state)
+{
+    if(!this->states_.empty())
+        popState();
+    pushState(state);
+ 
+    return;
+}
+ 
+GameState* Game::peekState()
+{
+    if(this->states_.empty()) return nullptr;
+    return this->states_.top();
+}
+
+void Game::PollEvents() {
+    SDL_Event e;
+
+    while (SDL_PollEvent(&e)){
+        if (e.type == SDL_QUIT){
+            Escape = true;
+        }
+        if (e.type == SDL_KEYDOWN){
+            const Uint8 *state = SDL_GetKeyboardState(NULL); 
+            
+            if ( state[SDL_SCANCODE_ESCAPE] ) {
+                Escape = true;
             }
         }
+
+        //Forward the event to current state.
+        if(peekState() == nullptr) continue;
+        peekState()->HandleInput(e);
+    }
+}

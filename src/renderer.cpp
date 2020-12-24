@@ -1,5 +1,4 @@
 #include "renderer.h"
-#include <iostream>
 
 void Renderer::Init() {
     //Initialize SDL
@@ -10,7 +9,7 @@ void Renderer::Init() {
     else
     {
         //Create window
-        window_ = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+        window_ = SDL_CreateWindow( "Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
         if( window_ == NULL )
         {
             printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
@@ -53,17 +52,20 @@ void Renderer::Cleanup() {
 }
 
  void Renderer::DrawSprite(int dX,int dY, int dW, int dH, int sX, int sY, int sW, int sH, SDL_Texture* texture) {
-    SDL_Rect rect = SDL_Rect(); // the rectangle
+    //Screen destination
+    SDL_Rect rect = SDL_Rect();
     rect.x = dX;
     rect.y = dY;
     rect.h = dH;
     rect.w = dW;
 
+    //Source from image
     SDL_Rect sourceRect = SDL_Rect();
     sourceRect.x = sX;
     sourceRect.y = sY;
     sourceRect.h = sH;
     sourceRect.w = sW;
+
     SDL_RenderCopy(renderer_, texture, &sourceRect, &rect);
  }
 
