@@ -1,8 +1,6 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
-#include "game.h"
-
 class GameState
 {
     public: 

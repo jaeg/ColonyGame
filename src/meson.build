@@ -1,7 +1,7 @@
 sources = files (
     'main.cpp', 
-    'mainstate.cpp',
-    'entity.cpp',
+    'state/mainstate.cpp',
+    'entity/entitymanager.cpp',
     'renderer.cpp',
     'game.cpp',
     'world/level.cpp',

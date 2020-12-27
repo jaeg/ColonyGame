@@ -5,11 +5,8 @@
 #include "world/level.h"
 #include "renderer.h"
 #include "resourcemanager.h"
-#include "gamestate.h"
-#include "mainstate.h"
-
-class GameState;
-class MainState;
+#include "state/gamestate.h"
+#include "state/mainstate.h"
 
 class Game {
     public:
