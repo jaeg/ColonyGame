@@ -7,17 +7,17 @@ int EntityManager::CreateEntity() {
         return -1;
     }
 
-    int i = entities_.front();
-    entities_.pop_front();
+    int i = entities_.top();
+    entities_.pop();
+    usedIds_.insert(i);
 
     return i;   
 };
 
 void EntityManager::DestroyEntity(int id) {
-    auto it = std::find(entities_.begin(), entities_.end(), id);
-    if  (it == entities_.end()) {
-        entities_.push_front(id); 
-
+    if  (usedIds_.find(id) != usedIds_.end()) {
+        entities_.push(id); 
+        usedIds_.erase(id);
         for (auto it : componentManagers_)
             {
                 auto cm = it.second;
@@ -30,7 +30,7 @@ void EntityManager::DestroyEntity(int id) {
 
 EntityManager::EntityManager() {
     //Populate the available ids
-    for (int i = 0; i < MAX_ENTITIES; i++) {
-        entities_.push_back(i);
+    for (int i = MAX_ENTITIES; i > 0; i--) {
+        entities_.push(i);
     }
 };

@@ -11,6 +11,7 @@
 #include "../system/rendersystem.h"
 #include "../system/playersystem.h"
 #include "../event/eventmanager.h"
+#include "../config.h"
 
 #include "../ui/uisystem.h"
 #include "../ui/button.h"

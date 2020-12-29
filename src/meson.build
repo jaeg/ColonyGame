@@ -6,5 +6,6 @@ sources = files (
     'game.cpp',
     'world/level.cpp',
     'resourcemanager.cpp',
-    'ui/uisystem.cpp'
+    'ui/uisystem.cpp',
+    'perlin/PerlinNoise.cpp'
 )

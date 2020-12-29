@@ -1,6 +1,7 @@
 #ifndef ENTITYMANAGER_H
 #define ENTITYMANAGER_H
-#include <deque>
+#include <stack>
+#include <set>
 #include <string>
 #include "../component/componentmanager.h"
 
@@ -11,8 +12,7 @@ class EntityManager {
         EntityManager();
         int CreateEntity();
         bool EntityExists(int id) {
-            auto it = std::find(entities_.begin(), entities_.end(), id);
-            return it == entities_.end();
+            return usedIds_.find(id) != usedIds_.end();
         };
         void DestroyEntity(int id);
         IComponentManager* GetComponentManager(std::string name) {
@@ -22,8 +22,9 @@ class EntityManager {
             componentManagers_.insert(std::pair<std::string, IComponentManager*>(name, cm));
         };
     private:
-        std::deque<int> entities_;
+        std::stack<int> entities_;
         std::map<std::string, IComponentManager*> componentManagers_;
+        std::set<int> usedIds_; 
 
 };
 

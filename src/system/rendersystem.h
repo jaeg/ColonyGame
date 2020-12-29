@@ -6,8 +6,10 @@
 #include "../resourcemanager.h"
 #include "../renderer.h"
 #include "../component/components.h"
+#include "../event/eventlistener.h"
+#include "../event/event.h"
 
-class RenderSystem: public System {
+class RenderSystem: public System, public EventListener {
     public:
         RenderSystem(Renderer* renderer, ResourceManager* resourceManager) {
             renderer_ = renderer;
@@ -32,6 +34,29 @@ class RenderSystem: public System {
             }
             int tileSize = TILE_SIZE / ZoomLevel;
             return tileSize;
+        };
+        void HandleEvent(std::shared_ptr<Event> event) {
+            if (event->GetType() == "InputEvent") {
+                ComponentManager<PositionComponent>* pcm = (ComponentManager<PositionComponent>*) GetComponentManager("PositionComponent");
+                for (auto c : pcm->GetAll())
+                {
+                    auto pc = c.second;
+                    std::shared_ptr<InputEvent> ie = std::dynamic_pointer_cast<InputEvent>(event);
+
+                    if ( ie->KeyBoardState[SDL_SCANCODE_1] ) {
+                        ZoomLevel = 1;
+                    }
+
+                    if ( ie->KeyBoardState[SDL_SCANCODE_2] ) {
+                        ZoomLevel = 2;
+                    }
+                    
+                    if ( ie->KeyBoardState[SDL_SCANCODE_3] ) {
+                        ZoomLevel = 3;
+                    }
+
+                }
+            }
         };
     private:
         Renderer* renderer_;

@@ -7,6 +7,9 @@ void TestButtonHandler(GameState* state) {
 
 MainState::MainState(Renderer* renderer) {
     currentLevel_ = new Level(1000,1000);
+    currentLevel_->GenerateOverworld(0,0,100,100);
+    currentLevel_->CreateSquareOfBlocks(12,1,10,10, TileType::WALL, TileType::GRASS);
+
     renderer_ = renderer;
     resourceManager_ = new ResourceManager(renderer_);
     playerSystem_ = new PlayerSystem();
@@ -15,9 +18,14 @@ MainState::MainState(Renderer* renderer) {
     uiSystem_ = new UISystem(renderer_);
     eventManager_ = new EventManager();
 
+    GameConfig config = GameConfig::LoadConfig("configfile");
     //Load resources
-    resourceManager_->LoadTexture("tileset","assets/tiny_galaxy_world.png");
-    resourceManager_->LoadTexture("characters","assets/tiny_galaxy_monsters.png");
+    for (auto c : config.Textures)
+    {
+        std::string name = c.first;
+        std::string path = c.second;
+        resourceManager_->LoadTexture(name,path);
+    }
 
     //Create render system
     renderSystem_ = new RenderSystem(renderer_, resourceManager_);
@@ -35,7 +43,9 @@ MainState::MainState(Renderer* renderer) {
     playerSystem_->RegisterComponentManager("PlayerComponent",entityManger_->GetComponentManager("PlayerComponent"));
     playerSystem_->RegisterComponentManager("PositionComponent",entityManger_->GetComponentManager("PositionComponent"));
 
+    //Register event listeners
     eventManager_->RegisterListener("InputEvent",playerSystem_);
+    eventManager_->RegisterListener("InputEvent",renderSystem_);
 
     //Register component managers with the entity manager.
     ComponentManager<AppearanceComponent>* acm = (ComponentManager<AppearanceComponent>*) entityManger_->GetComponentManager("AppearanceComponent");
@@ -86,12 +96,16 @@ void MainState::DrawView(int aX, int aY, int width, int height, bool centered) {
     for (int x = left; x <= right; x++) {
         for (int y = up; y <= down; y++) {
             Tile tile = currentLevel_->GetTile(x,y);
-            if (tile.type == -1) {
+            if (tile.Type == TileType::EMPTY) {
                 renderer_->DrawSprite(x*tileSize, y*tileSize, tileSize, tileSize, 0, 0, 16, 16, resourceManager_->GetTexture("tileset"));
-            } else if (tile.type == 1) {
-                renderer_->DrawSprite(x*tileSize, y*tileSize, tileSize, tileSize, 160, 112, 16, 16, resourceManager_->GetTexture("tileset"));
-            } else if (tile.type == 2) {
+            } else if (tile.Type == TileType::GRASS) {
+                renderer_->DrawSprite(x*tileSize, y*tileSize, tileSize, tileSize, 128 + tile.Variation * 16 , 112, 16, 16, resourceManager_->GetTexture("tileset"));
+            } else if (tile.Type == TileType::SAND) {
+                renderer_->DrawSprite(x*tileSize, y*tileSize, tileSize, tileSize, 128 + tile.Variation * 16, 96, 16, 16, resourceManager_->GetTexture("tileset"));
+            } else if (tile.Type == TileType::WALL) {
                 renderer_->DrawSprite(x*tileSize, y*tileSize, tileSize, tileSize, 0, 32, 16, 16, resourceManager_->GetTexture("tileset"));
+             } else if (tile.Type == TileType::WATER) {
+                renderer_->DrawSprite(x*tileSize, y*tileSize, tileSize, tileSize, 80, 176, 16, 16, resourceManager_->GetTexture("tileset"));
             } else {
                 renderer_->DrawSprite(x*tileSize, y*tileSize, tileSize, tileSize, 0, 48, 16, 16, resourceManager_->GetTexture("tileset"));
             }
@@ -110,24 +124,10 @@ void MainState::HandleInput(SDL_Event e) {
     if (e.type == SDL_KEYDOWN) {
         const Uint8 *state = SDL_GetKeyboardState(NULL); 
         
-        // Zoom level
-        if ( state[SDL_SCANCODE_1] ) {
-            renderSystem_->ZoomLevel = 1;
-        }
-        if ( state[SDL_SCANCODE_2] ) {
-            renderSystem_->ZoomLevel = 2;
-        }
-        if ( state[SDL_SCANCODE_3] ) {
-            renderSystem_->ZoomLevel = 3;
-        }
-
-        
         //Create an event and put it into a shared  pointer so we keep it cleaned.
         InputEvent ie = InputEvent();
         ie.KeyBoardState = state;
         std::shared_ptr<Event> e = std::make_shared<InputEvent>(ie);
-        printf("After pointer made: %s\n", e->GetType().c_str());
-
         eventManager_->SendEvent(e);
     }
     

@@ -6,9 +6,15 @@
 class Event {
     public:
         virtual ~Event() {
-            printf("Destroyed Event\n");
         };
         virtual std::string GetType() { return "base";};
+};
+
+
+class InputEvent: public Event {
+    public:
+        const Uint8 *KeyBoardState;
+        std::string GetType() { return "InputEvent";};
 };
 
 #endif

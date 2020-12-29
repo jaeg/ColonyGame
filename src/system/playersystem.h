@@ -3,14 +3,8 @@
 #include <SDL2/SDL.h>
 #include "system.h"
 #include "../component/components.h"
-#include "../event/event_listener.h"
+#include "../event/eventlistener.h"
 #include "../event/event.h"
-
-class InputEvent: public Event {
-    public:
-        const Uint8 *KeyBoardState;
-        std::string GetType() { return "InputEvent";};
-};
 
 class PlayerSystem: public System, public EventListener {
     public:
@@ -21,7 +15,6 @@ class PlayerSystem: public System, public EventListener {
         };
 
         void HandleEvent(std::shared_ptr<Event> event) {
-            printf("%s\n", event->GetType().c_str());
             if (event->GetType() == "InputEvent") {
                 ComponentManager<PositionComponent>* pcm = (ComponentManager<PositionComponent>*) GetComponentManager("PositionComponent");
                 for (auto c : pcm->GetAll())
