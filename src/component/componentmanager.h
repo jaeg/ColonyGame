@@ -6,6 +6,12 @@ class IComponentManager {
     public:
     virtual ~IComponentManager() {};
     virtual void DeleteComponentFor(int entityId){};
+    
+    template<typename T> 
+    T* GetAs() {
+        return (T*) this;
+    };
+    
 };
 
 template <typename T>

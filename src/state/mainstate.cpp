@@ -13,6 +13,7 @@ MainState::MainState(Renderer* renderer) {
     renderer_ = renderer;
     resourceManager_ = new ResourceManager(renderer_);
     playerSystem_ = new PlayerSystem();
+    simpleAISystem_ = new SimpleAISystem(currentLevel_);
 
     entityManger_ = new EntityManager();
     uiSystem_ = new UISystem(renderer_);
@@ -29,39 +30,55 @@ MainState::MainState(Renderer* renderer) {
 
     //Create render system
     renderSystem_ = new RenderSystem(renderer_, resourceManager_);
+
     //Create component managers
     entityManger_->AddComponentManager("AppearanceComponent", new ComponentManager<AppearanceComponent>());
     entityManger_->AddComponentManager("PositionComponent", new ComponentManager<PositionComponent>());
     entityManger_->AddComponentManager("PlayerComponent", new ComponentManager<PlayerComponent>());
+    entityManger_->AddComponentManager("WanderAIComponent", new ComponentManager<WanderAIComponent>());
 
     //Register component managers for render system
     renderSystem_->RegisterComponentManager("AppearanceComponent",entityManger_->GetComponentManager("AppearanceComponent"));
     renderSystem_->RegisterComponentManager("PositionComponent",entityManger_->GetComponentManager("PositionComponent"));
 
-
     //Register component managers for player system
     playerSystem_->RegisterComponentManager("PlayerComponent",entityManger_->GetComponentManager("PlayerComponent"));
     playerSystem_->RegisterComponentManager("PositionComponent",entityManger_->GetComponentManager("PositionComponent"));
+
+    //Register component managers for simple ai system
+    simpleAISystem_->RegisterComponentManager("WanderAIComponent",entityManger_->GetComponentManager("WanderAIComponent"));
+    simpleAISystem_->RegisterComponentManager("PositionComponent",entityManger_->GetComponentManager("PositionComponent"));
+
 
     //Register event listeners
     eventManager_->RegisterListener("InputEvent",playerSystem_);
     eventManager_->RegisterListener("InputEvent",renderSystem_);
 
-    //Register component managers with the entity manager.
-    ComponentManager<AppearanceComponent>* acm = (ComponentManager<AppearanceComponent>*) entityManger_->GetComponentManager("AppearanceComponent");
-    ComponentManager<PositionComponent>* pcm = (ComponentManager<PositionComponent>*) entityManger_->GetComponentManager("PositionComponent");
-    
     //Create an entity
     int entityID = entityManger_->CreateEntity();
     auto ac = std::make_shared<AppearanceComponent>();
     ac->SpriteX = 0;
     ac->SpriteY = 0;
-    acm->AddComponentTo(entityID, ac);
+    entityManger_->GetComponentManagerAs<ComponentManager<AppearanceComponent>>("AppearanceComponent")->AddComponentTo(entityID, ac);
 
     auto pc = std::make_shared<PositionComponent>();
     pc->X = 0;
     pc->Y = 0;
-    pcm->AddComponentTo(entityID, pc);
+    entityManger_->GetComponentManagerAs<ComponentManager<PositionComponent>>("PositionComponent")->AddComponentTo(entityID, pc);
+    entityManger_->GetComponentManagerAs<ComponentManager<PlayerComponent>>("PlayerComponent")->AddComponentTo(entityID, std::make_shared<PlayerComponent>());
+
+    //Create an wandering entity
+    entityID = entityManger_->CreateEntity();
+    ac = std::make_shared<AppearanceComponent>();
+    ac->SpriteX = 0;
+    ac->SpriteY = 64;
+    entityManger_->GetComponentManagerAs<ComponentManager<AppearanceComponent>>("AppearanceComponent")->AddComponentTo(entityID, ac);
+
+    pc = std::make_shared<PositionComponent>();
+    pc->X = 2;
+    pc->Y = 2;
+    entityManger_->GetComponentManagerAs<ComponentManager<PositionComponent>>("PositionComponent")->AddComponentTo(entityID, pc);
+    entityManger_->GetComponentManagerAs<ComponentManager<WanderAIComponent>>("WanderAIComponent")->AddComponentTo(entityID, std::make_shared<WanderAIComponent>());
 
     //UI
     Button* btn = new Button(60,0,50,50);
@@ -118,6 +135,7 @@ void MainState::Update() {
     //     entity->Update(0);
     // }
     playerSystem_->Update(); 
+    simpleAISystem_->Update();
 };
 
 void MainState::HandleInput(SDL_Event e) {

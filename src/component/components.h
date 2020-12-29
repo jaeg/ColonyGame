@@ -9,10 +9,15 @@ struct AppearanceComponent {
 struct PositionComponent {
     int X;
     int Y;
+    int Dir;
 };
 
 struct PlayerComponent {
 
+};
+
+struct WanderAIComponent {
+    
 };
 
 #endif

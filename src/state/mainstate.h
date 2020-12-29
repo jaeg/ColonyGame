@@ -10,6 +10,7 @@
 #include "../entity/entitymanager.h"
 #include "../system/rendersystem.h"
 #include "../system/playersystem.h"
+#include "../system/simpleaisystem.h"
 #include "../event/eventmanager.h"
 #include "../config.h"
 
@@ -30,6 +31,7 @@ class MainState: public GameState {
     private:
         RenderSystem* renderSystem_;
         PlayerSystem* playerSystem_;
+        SimpleAISystem* simpleAISystem_;
         ResourceManager* resourceManager_;
         EntityManager* entityManger_;
         EventManager* eventManager_;

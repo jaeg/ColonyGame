@@ -17,9 +17,11 @@ class PlayerSystem: public System, public EventListener {
         void HandleEvent(std::shared_ptr<Event> event) {
             if (event->GetType() == "InputEvent") {
                 ComponentManager<PositionComponent>* pcm = (ComponentManager<PositionComponent>*) GetComponentManager("PositionComponent");
-                for (auto c : pcm->GetAll())
+                ComponentManager<PlayerComponent>* playercm = (ComponentManager<PlayerComponent>*) GetComponentManager("PlayerComponent");
+
+                for (auto c : playercm->GetAll())
                 {
-                    auto pc = c.second;
+                    auto pc = pcm->GetComponentFor(c.first);
                     std::shared_ptr<InputEvent> ie = std::dynamic_pointer_cast<InputEvent>(event);
 
                     if ( ie->KeyBoardState[SDL_SCANCODE_W] ) {

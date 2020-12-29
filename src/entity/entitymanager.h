@@ -15,6 +15,12 @@ class EntityManager {
             return usedIds_.find(id) != usedIds_.end();
         };
         void DestroyEntity(int id);
+
+        template<typename T> 
+         T* GetComponentManagerAs(std::string name) {
+            return (T*)(componentManagers_.at(name));
+        };
+
         IComponentManager* GetComponentManager(std::string name) {
             return componentManagers_.at(name);
         };
