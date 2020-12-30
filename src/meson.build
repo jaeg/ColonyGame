@@ -1,11 +1,11 @@
 sources = files (
     'main.cpp', 
-    'state/mainstate.cpp',
-    'entity/entitymanager.cpp',
+    'state/main_state.cpp',
+    'entity/entity_manager.cpp',
     'renderer.cpp',
     'game.cpp',
     'world/level.cpp',
-    'resourcemanager.cpp',
-    'ui/uisystem.cpp',
+    'resource_manager.cpp',
+    'ui/ui_system.cpp',
     'perlin/PerlinNoise.cpp'
 )

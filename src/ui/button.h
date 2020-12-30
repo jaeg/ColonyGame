@@ -2,7 +2,7 @@
 #define BUTTON_H
 
 #include <SDL2/SDL.h>
-#include "uielement.h"
+#include "ui_element.h"
 #include "../renderer.h"
 
 class Button: public UIElement {

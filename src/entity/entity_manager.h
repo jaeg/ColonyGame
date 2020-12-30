@@ -3,7 +3,7 @@
 #include <stack>
 #include <set>
 #include <string>
-#include "../component/componentmanager.h"
+#include "../component/component_manager.h"
 
 #define MAX_ENTITIES 50
 

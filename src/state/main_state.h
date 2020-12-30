@@ -2,19 +2,19 @@
 #define MAINSTATE_H
 #include <list>
 #include <SDL2/SDL.h>
-#include "gamestate.h"
+#include "game_state.h"
 #include "../component/components.h"
 #include "../renderer.h"
 #include "../world/level.h"
-#include "../resourcemanager.h"
-#include "../entity/entitymanager.h"
-#include "../system/rendersystem.h"
-#include "../system/playersystem.h"
-#include "../system/simpleaisystem.h"
-#include "../event/eventmanager.h"
+#include "../resource_manager.h"
+#include "../entity/entity_manager.h"
+#include "../system/render_system.h"
+#include "../system/player_system.h"
+#include "../system/simple_ai_system.h"
+#include "../event/event_manager.h"
 #include "../config.h"
 
-#include "../ui/uisystem.h"
+#include "../ui/ui_system.h"
 #include "../ui/button.h"
 
 #define TILE_SIZE 32

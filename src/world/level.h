@@ -18,6 +18,7 @@ class Level {
 
         void GenerateOverworld(int sX, int sY, int width, int height);
         void CreateSquareOfBlocks(int sX, int sY, int width, int height, TileType wall, TileType floor);
+        void CreateCluster(int x, int y, int size, TileType type);
 
     private:
         int width_;

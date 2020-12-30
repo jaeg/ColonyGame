@@ -3,7 +3,7 @@
 
 #include <map>
 #include <string>
-#include "../component/componentmanager.h"
+#include "../component/component_manager.h"
 
 class System {
     public: 

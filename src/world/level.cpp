@@ -9,7 +9,7 @@ Level::Level(int width, int height) {
     tiles_ = new Tile[width_ * height_];
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
-            SetTile(x,y,TileType::GRASS, rand() % 3);
+            SetTile(x,y,TileType::GRASS, rand() % TileLibrary::GetTileTypeDef(TileType::GRASS).Variations);
         }
     }
 }
@@ -59,7 +59,7 @@ void Level::GenerateOverworld(int sX, int sY, int width, int height) {
             if (n < .5) {
                 SetTile(x, y, TileType::WATER);
             } else if (n >= .5 && n < 0.55) {
-                SetTile(x, y, TileType::SAND, rand() % 5);
+                SetTile(x, y, TileType::SAND, rand() % TileLibrary::GetTileTypeDef(TileType::SAND).Variations);
             }
         }
     }
@@ -69,12 +69,41 @@ void Level::CreateSquareOfBlocks(int sX, int sY, int width, int height, TileType
     for (int x = sX; x < width + sX; x++) {
         for (int y = sY; y < height + sY; y++) {
             if (x == sX || x == width + sX - 1) {
-                SetTile(x, y, wall);
+                SetTile(x, y, wall, rand() % TileLibrary::GetTileTypeDef(wall).Variations);
             } else if (y == sY || y == height + sY - 1) {
-                SetTile(x, y, wall);
+                SetTile(x, y, wall, rand() % TileLibrary::GetTileTypeDef(wall).Variations);
             } else {
-                SetTile(x, y, floor);
+                SetTile(x, y, floor, rand() % TileLibrary::GetTileTypeDef(floor).Variations);
             }
         }
     }
+}
+
+void Level::CreateCluster(int x, int y, int size, TileType type) {
+	for (int i = 0; i < size; i++) {
+		int n = rand()%5;
+		int e = rand()%5;
+		int s = rand()%5;
+		int w = rand()%5;
+
+		if (n == 1) {
+			x += 1;
+		}
+
+		if (s == 1) {
+			x--;
+		}
+
+		if (e == 1) {
+			y++;
+		}
+
+		if (w == 1) {
+			y--;
+		}
+
+		if (this->GetTile(x, y).Type != TileType::EMPTY) {
+            this->SetTile(x,y,type,0);
+		}
+	}
 }

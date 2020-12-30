@@ -8,7 +8,7 @@ class IComponentManager {
     virtual void DeleteComponentFor(int entityId){};
     
     template<typename T> 
-    T* GetAs() {
+    T* As() {
         return (T*) this;
     };
     

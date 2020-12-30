@@ -4,9 +4,9 @@
 #include <stack>
 #include "world/level.h"
 #include "renderer.h"
-#include "resourcemanager.h"
-#include "state/gamestate.h"
-#include "state/mainstate.h"
+#include "resource_manager.h"
+#include "state/game_state.h"
+#include "state/main_state.h"
 
 class Game {
     public:

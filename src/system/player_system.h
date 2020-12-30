@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 #include "system.h"
 #include "../component/components.h"
-#include "../event/eventlistener.h"
+#include "../event/event_listener.h"
 #include "../event/event.h"
 
 class PlayerSystem: public System, public EventListener {

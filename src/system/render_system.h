@@ -3,10 +3,10 @@
 #define TILE_SIZE 32
 
 #include "system.h"
-#include "../resourcemanager.h"
+#include "../resource_manager.h"
 #include "../renderer.h"
 #include "../component/components.h"
-#include "../event/eventlistener.h"
+#include "../event/event_listener.h"
 #include "../event/event.h"
 
 class RenderSystem: public System, public EventListener {

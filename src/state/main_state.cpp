@@ -1,4 +1,4 @@
-#include "mainstate.h"
+#include "main_state.h"
 
 void TestButtonHandler(GameState* state) {
     printf("Test handler!\n");
@@ -9,6 +9,8 @@ MainState::MainState(Renderer* renderer) {
     currentLevel_ = new Level(1000,1000);
     currentLevel_->GenerateOverworld(0,0,100,100);
     currentLevel_->CreateSquareOfBlocks(12,1,10,10, TileType::WALL, TileType::GRASS);
+
+    currentLevel_->CreateCluster(20,20,100,TileType::WALL);
 
     renderer_ = renderer;
     resourceManager_ = new ResourceManager(renderer_);
@@ -75,8 +77,8 @@ MainState::MainState(Renderer* renderer) {
     entityManger_->GetComponentManagerAs<ComponentManager<AppearanceComponent>>("AppearanceComponent")->AddComponentTo(entityID, ac);
 
     pc = std::make_shared<PositionComponent>();
-    pc->X = 2;
-    pc->Y = 2;
+    pc->X = 1;
+    pc->Y = 1;
     entityManger_->GetComponentManagerAs<ComponentManager<PositionComponent>>("PositionComponent")->AddComponentTo(entityID, pc);
     entityManger_->GetComponentManagerAs<ComponentManager<WanderAIComponent>>("WanderAIComponent")->AddComponentTo(entityID, std::make_shared<WanderAIComponent>());
 
@@ -113,19 +115,10 @@ void MainState::DrawView(int aX, int aY, int width, int height, bool centered) {
     for (int x = left; x <= right; x++) {
         for (int y = up; y <= down; y++) {
             Tile tile = currentLevel_->GetTile(x,y);
-            if (tile.Type == TileType::EMPTY) {
-                renderer_->DrawSprite(x*tileSize, y*tileSize, tileSize, tileSize, 0, 0, 16, 16, resourceManager_->GetTexture("tileset"));
-            } else if (tile.Type == TileType::GRASS) {
-                renderer_->DrawSprite(x*tileSize, y*tileSize, tileSize, tileSize, 128 + tile.Variation * 16 , 112, 16, 16, resourceManager_->GetTexture("tileset"));
-            } else if (tile.Type == TileType::SAND) {
-                renderer_->DrawSprite(x*tileSize, y*tileSize, tileSize, tileSize, 128 + tile.Variation * 16, 96, 16, 16, resourceManager_->GetTexture("tileset"));
-            } else if (tile.Type == TileType::WALL) {
-                renderer_->DrawSprite(x*tileSize, y*tileSize, tileSize, tileSize, 0, 32, 16, 16, resourceManager_->GetTexture("tileset"));
-             } else if (tile.Type == TileType::WATER) {
-                renderer_->DrawSprite(x*tileSize, y*tileSize, tileSize, tileSize, 80, 176, 16, 16, resourceManager_->GetTexture("tileset"));
-            } else {
-                renderer_->DrawSprite(x*tileSize, y*tileSize, tileSize, tileSize, 0, 48, 16, 16, resourceManager_->GetTexture("tileset"));
-            }
+            TileDef tileDef = TileLibrary::GetTileTypeDef(tile.Type);
+            int sX = TileLibrary::IndexToCoordsX(tileDef.TextureIndex, 16) * 16;
+            int sY = TileLibrary::IndexToCoordsY(tileDef.TextureIndex, 16) * 16;
+            renderer_->DrawSprite(x*tileSize, y*tileSize, tileSize, tileSize, sX + (tile.Variation * 16), sY, 16, 16, resourceManager_->GetTexture("tileset"));
         }
     }
 }

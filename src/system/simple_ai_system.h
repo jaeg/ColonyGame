@@ -5,7 +5,7 @@
 
 #include "system.h"
 #include "../component/components.h"
-#include "../event/eventlistener.h"
+#include "../event/event_listener.h"
 #include "../event/event.h"
 #include "../world/level.h"
 
@@ -42,6 +42,15 @@ class SimpleAISystem: public System, public EventListener {
                 if ( pc->Y < 0 || pc->Y > level_->GetHeight()) {
                     pc->Y = oldY;
                 }
+
+                Tile tile = level_->GetTile(pc->X, pc->Y);
+                
+                //Bit mask checking to see if tile we moved onto is solid or water.
+                if ((1 << (int)tile.Type) & SolidTiles || (1 << (int)tile.Type) & WaterTiles) {
+                     pc->X = oldX;
+                     pc->Y = oldY;
+                }
+
             }
         };
 

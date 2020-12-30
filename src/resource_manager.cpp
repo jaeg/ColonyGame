@@ -1,4 +1,4 @@
-#include "resourcemanager.h"
+#include "resource_manager.h"
 
 SDL_Texture* ResourceManager::GetTexture(std::string name) {
     return textures[name];
