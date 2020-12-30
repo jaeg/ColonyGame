@@ -13,16 +13,14 @@ MainState::MainState(Renderer* renderer) {
     currentLevel_->CreateCluster(20,20,100,TileType::WALL);
 
     renderer_ = renderer;
+    //Managers
     resourceManager_ = new ResourceManager(renderer_);
-    playerSystem_ = new PlayerSystem();
-    simpleAISystem_ = new SimpleAISystem(currentLevel_);
-
     entityManger_ = new EntityManager();
-    uiSystem_ = new UISystem(renderer_);
     eventManager_ = new EventManager();
 
     GameConfig config = GameConfig::LoadConfig("configfile");
-    //Load resources
+   
+    //Load resources from config
     for (auto c : config.Textures)
     {
         std::string name = c.first;
@@ -30,14 +28,19 @@ MainState::MainState(Renderer* renderer) {
         resourceManager_->LoadTexture(name,path);
     }
 
-    //Create render system
-    renderSystem_ = new RenderSystem(renderer_, resourceManager_);
-
     //Create component managers
     entityManger_->AddComponentManager("AppearanceComponent", new ComponentManager<AppearanceComponent>());
     entityManger_->AddComponentManager("PositionComponent", new ComponentManager<PositionComponent>());
     entityManger_->AddComponentManager("PlayerComponent", new ComponentManager<PlayerComponent>());
     entityManger_->AddComponentManager("WanderAIComponent", new ComponentManager<WanderAIComponent>());
+
+
+    //Systems
+    playerSystem_ = new PlayerSystem();
+    simpleAISystem_ = new SimpleAISystem(currentLevel_);
+    uiSystem_ = new UISystem(renderer_);
+    renderSystem_ = new RenderSystem(renderer_, resourceManager_);
+   
 
     //Register component managers for render system
     renderSystem_->RegisterComponentManager("AppearanceComponent",entityManger_->GetComponentManager("AppearanceComponent"));
@@ -53,8 +56,9 @@ MainState::MainState(Renderer* renderer) {
 
 
     //Register event listeners
-    eventManager_->RegisterListener("InputEvent",playerSystem_);
-    eventManager_->RegisterListener("InputEvent",renderSystem_);
+    eventManager_->RegisterListener("KeyboardInputEvent",playerSystem_);
+    eventManager_->RegisterListener("MouseInputEvent",playerSystem_);
+    eventManager_->RegisterListener("KeyboardInputEvent",renderSystem_);
 
     //Create an entity
     int entityID = entityManger_->CreateEntity();
@@ -136,14 +140,23 @@ void MainState::HandleInput(SDL_Event e) {
         const Uint8 *state = SDL_GetKeyboardState(NULL); 
         
         //Create an event and put it into a shared  pointer so we keep it cleaned.
-        InputEvent ie = InputEvent();
+        KeyboardInputEvent ie = KeyboardInputEvent();
         ie.KeyBoardState = state;
-        std::shared_ptr<Event> e = std::make_shared<InputEvent>(ie);
+        std::shared_ptr<Event> e = std::make_shared<KeyboardInputEvent>(ie);
         eventManager_->SendEvent(e);
     }
     
     if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONUP) {
         //Forward the event to the ui system.
         uiSystem_->HandleInput(e,this);
+
+        //Create an event and put it into a shared  pointer so we keep it cleaned.
+        MouseInputEvent ie = MouseInputEvent();
+        int mX, mY = 0;
+        ie.state = SDL_GetMouseState(&mX,&mY);
+        ie.X = mX;
+        ie.Y = mY;
+        std::shared_ptr<Event> e = std::make_shared<MouseInputEvent>(ie);
+        eventManager_->SendEvent(e);
     };
 };

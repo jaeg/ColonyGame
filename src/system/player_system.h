@@ -15,14 +15,20 @@ class PlayerSystem: public System, public EventListener {
         };
 
         void HandleEvent(std::shared_ptr<Event> event) {
-            if (event->GetType() == "InputEvent") {
+            if (event->GetType() == "MouseInputEvent") {
+                std::shared_ptr<MouseInputEvent> ie = std::dynamic_pointer_cast<MouseInputEvent>(event);
+                if (ie->state == SDL_BUTTON_LEFT) {
+                    printf("Left clicked!\n");
+                }
+            }
+            if (event->GetType() == "KeyboardInputEvent") {
                 ComponentManager<PositionComponent>* pcm = (ComponentManager<PositionComponent>*) GetComponentManager("PositionComponent");
                 ComponentManager<PlayerComponent>* playercm = (ComponentManager<PlayerComponent>*) GetComponentManager("PlayerComponent");
 
                 for (auto c : playercm->GetAll())
                 {
                     auto pc = pcm->GetComponentFor(c.first);
-                    std::shared_ptr<InputEvent> ie = std::dynamic_pointer_cast<InputEvent>(event);
+                    std::shared_ptr<KeyboardInputEvent> ie = std::dynamic_pointer_cast<KeyboardInputEvent>(event);
 
                     if ( ie->KeyBoardState[SDL_SCANCODE_W] ) {
                         pc->Y--;

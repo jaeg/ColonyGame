@@ -36,12 +36,12 @@ class RenderSystem: public System, public EventListener {
             return tileSize;
         };
         void HandleEvent(std::shared_ptr<Event> event) {
-            if (event->GetType() == "InputEvent") {
+            if (event->GetType() == "KeyboardInputEvent") {
                 ComponentManager<PositionComponent>* pcm = (ComponentManager<PositionComponent>*) GetComponentManager("PositionComponent");
                 for (auto c : pcm->GetAll())
                 {
                     auto pc = c.second;
-                    std::shared_ptr<InputEvent> ie = std::dynamic_pointer_cast<InputEvent>(event);
+                    std::shared_ptr<KeyboardInputEvent> ie = std::dynamic_pointer_cast<KeyboardInputEvent>(event);
 
                     if ( ie->KeyBoardState[SDL_SCANCODE_1] ) {
                         ZoomLevel = 1;
